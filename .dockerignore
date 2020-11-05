@@ -1,0 +1,15 @@
+node_modules
+package-lock.json
+
+# Git
+.git
+.gitignore
+
+# VS Code
+.vscode
+
+# Data
+data
+
+# Log
+log
