@@ -23,11 +23,12 @@ module.exports = class UserService {
 
                 let expiresIn = 86400 // 24 hours
 
-                let payload = { id: user._id }
+                let payload = { id: user.id }
+
 
                 let token = await jwt.sign(payload, expiresIn)
 
-                let response = _.pick(user, ['_id', 'username', 'email'])
+                let response = _.pick(user, ['id', 'first_name', 'last_name', 'email'])
 
                 resolve({
                     statusCode: 200,
@@ -37,7 +38,6 @@ module.exports = class UserService {
                     }
                 });
             } catch (error) {
-                console.log(error)
                 reject({ statusCode: 500, message: "Something went wrong!", error: error })
             }
         });
@@ -56,7 +56,6 @@ module.exports = class UserService {
 
 
                 user.save().then(user => {
-                    
                     UserMailer.signUp(user).then(data => {
                         console.log(data);
                     })
@@ -76,7 +75,7 @@ module.exports = class UserService {
     static resetPassword(token, password) {
         return new Promise((resolve, reject) => {
             try {
-                model.user.findOne({ resetPasswordToken: token }).then(async user => {
+                model.user.findOne({ where: { resetPasswordToken: token } }).then(async user => {
                     if (user) {
                         if (user.resetPasswordExpiry < new Date()) {
                             reject({ statusCode: 400, message: 'Token expired' })
@@ -107,18 +106,18 @@ module.exports = class UserService {
 
     static sendResetPassword(email) {
         return new Promise((resolve, reject) => {
-            model.user.findOne({ email: email }).then(async user => {
+            model.user.findOne({ where: { email: email } }).then(async user => {
                 if (user) {
                     user.resetPasswordToken = await jwt.hashPassword(new Date().getTime().toString())
                     user.resetPasswordExpiry = new Date(new Date().getTime() + (60 * 60 * 1000));
                     user.save().then(async user => {
-                        UserMailer.forgotPassword(user).then(data => {
+                        UserMailer.forgotPassword(user).then((data) => {
                             console.log(data);
                         })
                         resolve({ statusCode: 200, message: 'Email sent successfully' })
                     }).catch(err => {
                         console.log(err);
-                        reject({ statusCode: 500, message: "Something went wrong!", error: error })
+                        reject({ statusCode: 500, message: "Something went wrong!", error: err })
                     })
                 } else {
                     reject({ statusCode: 400, message: 'Email not exists' })
@@ -129,8 +128,7 @@ module.exports = class UserService {
 
     static validateResetToken(token) {
         return new Promise((resolve, reject) => {
-            console.log(token)
-            model.user.findOne({ resetPasswordToken: token }).then(async user => {
+            model.user.findOne({ where: { resetPasswordToken: token } }).then(async user => {
                 if (user) {
                     if (user.resetPasswordExpiry < new Date()) {
                         reject({ statusCode: 400, data: false })
@@ -139,7 +137,7 @@ module.exports = class UserService {
                     }
                 } else {
                     reject({ statusCode: 400, data: false })
-                }
+                }d
             })
         });
     }

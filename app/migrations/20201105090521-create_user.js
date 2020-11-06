@@ -23,6 +23,12 @@ module.exports = {
       last_name: {
         type: Sequelize.STRING(25),
       },
+      resetPasswordToken: {
+        type: Sequelize.STRING(100)
+      },
+      resetPasswordExpiry: {
+        type: Sequelize.DATE
+      },
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE,
 
