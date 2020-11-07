@@ -137,7 +137,7 @@ module.exports = class UserService {
                     }
                 } else {
                     reject({ statusCode: 400, data: false })
-                }d
+                }
             })
         });
     }

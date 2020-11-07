@@ -1,9 +1,9 @@
 const config = require("../config")
 const nodemailer = require('nodemailer');
 
-let googleCredentials = config['social_logins']['google']
+let googleCredentials = config['mailer']
 let auth = {
-        user: googleCredentials.email, // generated ethereal user
+        user: googleCredentials.email, // generated ethereal user       
         pass: googleCredentials.password, // generated ethereal password
     }
     // let auth = {

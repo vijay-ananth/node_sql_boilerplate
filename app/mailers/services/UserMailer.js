@@ -38,7 +38,7 @@ module.exports = class UserMailer {
             var mailOptions = {
                 from: "ajithvijay8888@gmail.com",
                 to: user.email,
-                subject: 'Reset Password Instructions - River Stone',
+                subject: 'Reset Password Instructions - Steel Dalal',
                 html: templateHTML
             }
 
