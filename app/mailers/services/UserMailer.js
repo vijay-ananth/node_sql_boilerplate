@@ -18,7 +18,7 @@ module.exports = class UserMailer {
             }
             mailer.sendMail(mailOptions, (err, res) => {
                 if (err) {
-                    console.log("ERROR in sending EMAIL:::", err)
+                    logger.error("ERROR in sending EMAIL:::", err)
                     reject('Sending of email failed')
                 } else {
                     resolve('Email sent')
@@ -44,7 +44,7 @@ module.exports = class UserMailer {
 
             mailer.sendMail(mailOptions, (err, res) => {
                 if (err) {
-                    console.log("ERROR in sending EMAIL:::", err)
+                    logger.error("ERROR in sending EMAIL:::", err)
                     reject('Sending of email failed')
                 } else {
                     resolve('Email sent')

@@ -1,7 +1,13 @@
 const model = require("../models");
 const UserService = require("../services/UserService");
 
-exports.signUp = async (req, res) => {
+exports.error = (req, res) => {
+    UserService.error().then(response => {
+        return res.send(response);
+    })
+};
+
+exports.signUp = async(req, res) => {
 
     let isExist = await model.user.findOne({ where: { email: req.body.email } })
     if (isExist)
@@ -15,7 +21,7 @@ exports.signUp = async (req, res) => {
 
 };
 
-exports.login = async (req, res) => {
+exports.login = async(req, res) => {
     UserService.loginUser(req.body).then(response => {
         res.send(response);
     }).catch(err => {
@@ -44,7 +50,7 @@ exports.resetPassword = (req, res) => {
     })
 }
 
-exports.validateResetToken = async (req, res) => {
+exports.validateResetToken = async(req, res) => {
     let { token } = req.body
     UserService.validateResetToken(token).then(resp => {
         res.send(resp);

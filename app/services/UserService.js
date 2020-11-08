@@ -1,11 +1,16 @@
 const model = require("../models");
 const jwt = require("../services/jwt")
 const UserMailer = require("../mailers/services/UserMailer")
-const _ = require("lodash")
+const _ = require("lodash");
+const logger = require("../middlewares/logger");
 module.exports = class UserService {
 
+    static error() {
+        throw new ErrorHandler(500, 'hi', { hi: 'hi' })
+    }
+
     static async loginUser(body) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async(resolve, reject) => {
             try {
                 let user = await model.user.findOne({
                     where: {
@@ -44,7 +49,7 @@ module.exports = class UserService {
     }
 
     static async signUp(body) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async(resolve, reject) => {
             try {
                 const user = model.user.build({
                     username: body.username,
@@ -57,16 +62,16 @@ module.exports = class UserService {
 
                 user.save().then(user => {
                     UserMailer.signUp(user).then(data => {
-                        console.log(data);
+                        logger.info(data);
                     })
-                    console.log("USER::CREATED")
+                    logger.info("USER::CREATED")
                     return resolve({ statusCode: 200 })
-                }).catch(function (error) {
-                    console.log(error)
+                }).catch(function(error) {
+                    logger.error(error)
                     return reject({ statusCode: 500, message: "Something went wrong!", error: error })
                 });
             } catch (error) {
-                console.log(error)
+                logger.error(error)
                 return reject({ statusCode: 500, message: "Something went wrong!", error: error })
             }
         })
@@ -80,14 +85,14 @@ module.exports = class UserService {
                         if (user.resetPasswordExpiry < new Date()) {
                             reject({ statusCode: 400, message: 'Token expired' })
                         } else {
-                            console.log(token, password)
+                            logger.info(token, password)
                             user.password = await jwt.hashPassword(password)
                             user.resetPasswordToken = null
                             user.resetPasswordExpiry = null
                             user.save().then(user => {
                                 resolve({ statusCode: 200, message: 'Reset password successful' })
                             }).catch(error => {
-                                console.log(error)
+                                logger.error(error)
                                 reject({ statusCode: 500, message: "Something went wrong!", error: error })
                             })
                         }
@@ -95,7 +100,7 @@ module.exports = class UserService {
                         reject({ statusCode: 400, message: 'Invalid token' })
                     }
                 }).catch(error => {
-                    console.log(error)
+                    logger.error(error)
                     reject({ statusCode: 500, message: "Something went wrong!", error: error })
                 })
             } catch (error) {
@@ -112,11 +117,11 @@ module.exports = class UserService {
                     user.resetPasswordExpiry = new Date(new Date().getTime() + (60 * 60 * 1000));
                     user.save().then(async user => {
                         UserMailer.forgotPassword(user).then((data) => {
-                            console.log(data);
+                            logger.info(data);
                         })
                         resolve({ statusCode: 200, message: 'Email sent successfully' })
                     }).catch(err => {
-                        console.log(err);
+                        logger.error(err);
                         reject({ statusCode: 500, message: "Something went wrong!", error: err })
                     })
                 } else {
@@ -150,7 +155,7 @@ module.exports = class UserService {
                 else
                     reject({ 'message': 'User not exists' })
             }).catch(err => {
-                console.log(err)
+                logger.error(err)
                 reject(false)
             })
         });
@@ -171,7 +176,7 @@ module.exports = class UserService {
     }
 
     static socialLogin(id) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async(resolve, reject) => {
             try {
                 const token = await jwt.sign({ id }, '1d')
                 resolve({ statusCode: 200, accessToken: token })

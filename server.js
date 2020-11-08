@@ -4,8 +4,13 @@ const cors = require("cors");
 const app = express();
 const path = require('path');
 const passport = require('passport');
+const logger = require('./app/middlewares/logger')
+const { handleError, ErrorHandler } = require('./app/services/ErrorHandler');
+
 
 global.appRoot = path.resolve(__dirname);
+global.logger = logger
+global.ErrorHandler = ErrorHandler
 
 // set port, listen for requests
 const PORT = process.env.PORT || 5000;
@@ -16,7 +21,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 //initialize database connection
-require("../steel_dalal/app/db/index")
+require("./app/db/index")
 
 // passport initialization
 require('./app/services/passport')(passport);
@@ -34,8 +39,10 @@ app.get("/ping", (req, res) => {
 // routes
 app.use("/api", require("./app/routes"));
 
-
+app.use((err, req, res, next) => {
+    handleError(err, res);
+});
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
+    logger.info(`Server is running on port ${PORT}.`);
 });

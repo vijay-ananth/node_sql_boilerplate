@@ -1,6 +1,5 @@
-const Sequelize = require("sequelize")
-const dbconfig = require("../config").sequelize
-console.log(dbconfig.password)
+const Sequelize = require("sequelize");
+const dbconfig = require("../config").sequelize;
 
 const sequelize = new Sequelize(dbconfig.database, dbconfig.username, dbconfig.password, {
     host: dbconfig.host,
@@ -9,10 +8,10 @@ const sequelize = new Sequelize(dbconfig.database, dbconfig.username, dbconfig.p
 })
 sequelize.authenticate()
     .then(() => {
-        console.log("connected successfully")
+        logger.info("connected successfully")
     }).catch((err) => {
-        console.log(err)
+        logger.error(err)
     });
-   
+
 module.exports = sequelize;
 global.sequelize = sequelize;

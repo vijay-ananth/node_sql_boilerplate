@@ -14,7 +14,7 @@ module.exports = async(req, res, next) => {
             next();
         }
     } catch (ex) {
-        console.log(ex)
+        logger.error(ex)
         return res.send({ statusCode: 401, error: 'Token error' })
     }
 };

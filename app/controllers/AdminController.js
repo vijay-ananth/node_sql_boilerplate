@@ -6,7 +6,7 @@ exports.listUser = async(req, res) => {
         let users = await model.user.find({ role: 'USER' }, { password: 0, __v: 0 })
         return res.status(200).send({ statusCode: 200, data: users })
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         return res.status(500).send({ statusCode: 500, error: error, message: "Something went wrong!" });
     }
 };
@@ -21,7 +21,7 @@ exports.updateUser = async(req, res) => {
         updated_user = _.pick(updated_user, ['_id', 'username', 'email', 'status', 'role', 'createdAt', 'updatedAt'])
         return res.status(200).send({ statusCode: 200, data: updated_user })
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         return res.status(500).send({ statusCode: 500, error: error, message: "Something went wrong!" });
     }
 };
