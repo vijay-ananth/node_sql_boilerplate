@@ -1,8 +1,8 @@
 module.exports = {
     development: {
         sequelize: {
-            username: 'root',
-            password: '',
+            username: 'ajith',
+            password: 'password',
             database: 'server',
             port: "3306",
             host: 'localhost',

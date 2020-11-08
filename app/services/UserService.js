@@ -5,7 +5,7 @@ const _ = require("lodash");
 module.exports = class UserService {
 
     static async loginUser(body) {
-        return new Promise(async(resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 let user = await model.user.findOne({
                     where: {
@@ -44,10 +44,9 @@ module.exports = class UserService {
     }
 
     static async signUp(body) {
-        return new Promise(async(resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 const user = model.user.build({
-                    username: body.username,
                     email: body.email,
                     first_name: body.first_name,
                     last_name: body.last_name,
@@ -61,13 +60,13 @@ module.exports = class UserService {
                     })
                     logger.info("USER::CREATED")
                     return resolve({ statusCode: 200 })
-                }).catch(function(error) {
+                }).catch(function (error) {
                     logger.error(error)
-                    return reject({ statusCode: 500, message: "Something went wrong!", error: error })
+                    reject(new ErrorHandler(500, 'Something went wrong!', error))
                 });
             } catch (error) {
                 logger.error(error)
-                return reject({ statusCode: 500, message: "Something went wrong!", error: error })
+                reject(new ErrorHandler(500, 'Something went wrong!', error))
             }
         })
     }
@@ -88,18 +87,18 @@ module.exports = class UserService {
                                 resolve({ statusCode: 200, message: 'Reset password successful' })
                             }).catch(error => {
                                 logger.error(error)
-                                reject({ statusCode: 500, message: "Something went wrong!", error: error })
+                                reject(new ErrorHandler(500, 'Something went wrong!', error))
                             })
                         }
                     } else {
-                        reject({ statusCode: 400, message: 'Invalid token' })
+                        reject(new ErrorHandler(400, 'Invalid token'))
                     }
                 }).catch(error => {
                     logger.error(error)
-                    reject({ statusCode: 500, message: "Something went wrong!", error: error })
+                    reject(new ErrorHandler(500, 'Something went wrong!', error))
                 })
             } catch (error) {
-                reject({ statusCode: 500, message: "Something went wrong!", error: error })
+                reject(new ErrorHandler(500, 'Something went wrong!', error))
             }
         });
     }
@@ -117,10 +116,10 @@ module.exports = class UserService {
                         resolve({ statusCode: 200, message: 'Email sent successfully' })
                     }).catch(err => {
                         logger.error(err);
-                        reject({ statusCode: 500, message: "Something went wrong!", error: err })
+                        reject(new ErrorHandler(500, 'Something went wrong!', error))
                     })
                 } else {
-                    reject({ statusCode: 400, message: 'Email not exists' })
+                    reject(new ErrorHandler(400, 'Email not exists'))              
                 }
             })
         });
@@ -148,7 +147,7 @@ module.exports = class UserService {
                 if (user)
                     resolve(user)
                 else
-                    reject({ 'message': 'User not exists' })
+                reject(new ErrorHandler( 'User not existss')) 
             }).catch(err => {
                 logger.error(err)
                 reject(false)
@@ -163,20 +162,20 @@ module.exports = class UserService {
                     let filtered_data = _.pick(user, ['_id', 'username', 'email', 'status', 'role', 'createdAt', 'updatedAt'])
                     resolve({ statusCode: 200, data: filtered_data })
                 } else
-                    reject({ statusCode: 400, 'message': 'User not exists' })
-            }).catch(err => {
-                reject({ statusCode: 500, 'message': 'Something went wrong!', error: err })
+                reject(new ErrorHandler(400, 'User not exists')) 
+            }).catch(error => {
+                reject(new ErrorHandler(500, 'Something went wrong!',error)) 
             })
         });
     }
 
     static socialLogin(id) {
-        return new Promise(async(resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 const token = await jwt.sign({ id }, '1d')
                 resolve({ statusCode: 200, accessToken: token })
             } catch (error) {
-                reject({ statusCode: 500, 'message': 'Something went wrong!', error })
+                reject(new ErrorHandler(500, 'Something went wrong!',error)) 
             }
         })
     }
