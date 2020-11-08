@@ -7,7 +7,6 @@ var passport = require('passport');
 
 router.post('/sign_up', UserController.signUp)
 router.post('/login', UserController.login)
-router.get('/error', UserController.error)
 router.post('/forgot_password', UserController.forgotPassword)
 router.post('/reset_password', UserController.resetPassword)
 router.post('/validate_reset_token', UserController.validateResetToken)

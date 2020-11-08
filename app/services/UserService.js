@@ -4,10 +4,6 @@ const UserMailer = require("../mailers/services/UserMailer")
 const _ = require("lodash");
 module.exports = class UserService {
 
-    static error() {
-        throw new ErrorHandler(500, 'hi', { hi: 'hi' })
-    }
-
     static async loginUser(body) {
         return new Promise(async(resolve, reject) => {
             try {
@@ -18,12 +14,12 @@ module.exports = class UserService {
                 })
 
                 if (!user)
-                    reject({ statusCode: 401, message: "Unauthorized" });
+                    reject(new ErrorHandler(401, 'Unauthorized'))
 
                 let passwordIsValid = await jwt.comparePassword(body.password, user.password)
 
                 if (!passwordIsValid)
-                    reject({ statusCode: 401, message: "Unauthorized" });
+                    reject(new ErrorHandler(401, 'Unauthorized'))
 
                 let expiresIn = 86400 // 24 hours
 
@@ -42,7 +38,7 @@ module.exports = class UserService {
                     }
                 });
             } catch (error) {
-                reject({ statusCode: 500, message: "Something went wrong!", error: error })
+                reject(new ErrorHandler(500, 'Something went wrong!', error))
             }
         });
     }

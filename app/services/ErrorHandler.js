@@ -3,13 +3,13 @@ class ErrorHandler extends Error {
         super();
         this.statusCode = statusCode;
         this.message = message;
-        this.error = error || null;
+        this.error = error && error.hasOwnProperty('stack') ? error.stack : null;
     }
 }
 
 const handleError = (err, res) => {
     const { statusCode, message, error } = err;
-    logger.error(`${message}\t STACKTRACE: ${JSON.stringify(error)}`)
+    logger.error(`${message}\t STACKTRACE: ${error}`)
     res.status(statusCode).json({
         status: "error",
         statusCode,

@@ -1,14 +1,7 @@
 const model = require("../models");
 const UserService = require("../services/UserService");
 
-exports.error = (req, res) => {
-    UserService.error().then(response => {
-        return res.send(response);
-    })
-};
-
 exports.signUp = async(req, res) => {
-
     let isExist = await model.user.findOne({ where: { email: req.body.email } })
     if (isExist)
         return res.status(400).send({ statusCode: 400, message: "Email already exist" });
@@ -18,15 +11,12 @@ exports.signUp = async(req, res) => {
     }).catch(err => {
         return res.status(err.statusCode ? err.statusCode : 500).send(err);
     })
-
 };
 
-exports.login = async(req, res) => {
+exports.login = async(req, res, next) => {
     UserService.loginUser(req.body).then(response => {
         res.send(response);
-    }).catch(err => {
-        res.status(err.statusCode ? err.statusCode : 500).send(err);
-    })
+    }).catch(err => next(err))
 };
 
 exports.forgotPassword = (req, res) => {
