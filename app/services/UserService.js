@@ -2,7 +2,6 @@ const model = require("../models");
 const jwt = require("../services/jwt")
 const UserMailer = require("../mailers/services/UserMailer")
 const _ = require("lodash");
-const logger = require("../middlewares/logger");
 module.exports = class UserService {
 
     static error() {
